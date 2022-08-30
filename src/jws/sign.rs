@@ -14,7 +14,7 @@ use crate::{
 /// - `S` is the signature
 ///
 /// [signing algorithm]: crate::jwa::JsonWebSigningAlgorithm
-#[derive(Debug, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Signed<S> {
     pub(crate) value: JsonWebSignatureValue,
     pub(crate) signature: S,

@@ -78,7 +78,9 @@ impl Compact {
         }
     }
 
-    pub(crate) fn part(&self, idx: usize) -> Option<&Base64UrlString> {
+    /// Get the part of this compact representation at the given index.
+    #[inline]
+    pub fn part(&self, idx: usize) -> Option<&Base64UrlString> {
         self.parts.get(idx)
     }
 

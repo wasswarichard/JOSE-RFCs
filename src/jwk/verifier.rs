@@ -2,6 +2,7 @@ use super::{
     ec::{
         p256::P256Verifier, p384::P384Verifier, secp256k1::Secp256k1Verifier, EcPrivate, EcPublic,
     },
+    rsa::RsaVerifier,
     symmetric::{self, hmac::HmacKey},
     AsymmetricJsonWebKey, FromJwkError, FromKey, Private, Public, SymmetricJsonWebKey,
 };
@@ -40,7 +41,7 @@ impl JwkVerifier {
                                 InnerVerifier::Secp256k1(key.into_verifier(alg)?)
                             }
                         },
-                        Public::Rsa(_) => todo!(),
+                        Public::Rsa(key) => InnerVerifier::Rsa(key.into_verifier(alg)?),
                     },
                     AsymmetricJsonWebKey::Private(key) => match key {
                         Private::Ec(key) => match key {
@@ -50,7 +51,7 @@ impl JwkVerifier {
                                 InnerVerifier::Secp256k1(key.into_verifier(alg)?)
                             }
                         },
-                        Private::Rsa(_) => todo!(),
+                        Private::Rsa(key) => InnerVerifier::Rsa((*key).into_verifier(alg)?),
                     },
                 },
                 JsonWebKeyType::Symmetric(key) => match key {
@@ -71,6 +72,7 @@ impl JwkVerifier {
 impl Verifier for JwkVerifier {
     fn verify(&mut self, msg: &[u8], signature: &[u8]) -> Result<(), signature::Error> {
         match &mut self.inner {
+            InnerVerifier::Rsa(verifier) => verifier.verify(msg, signature),
             InnerVerifier::Hs256(verifier) => verifier.verify(msg, signature),
             InnerVerifier::Hs384(verifier) => verifier.verify(msg, signature),
             InnerVerifier::Hs512(verifier) => verifier.verify(msg, signature),
@@ -131,6 +133,7 @@ where
 /// Abstract type with a variant for each [`Verifier`]
 #[derive(Debug)]
 enum InnerVerifier {
+    Rsa(RsaVerifier),
     // symmetric algorithms
     Hs256(HmacKey<symmetric::hmac::Hs256>),
     Hs384(HmacKey<symmetric::hmac::Hs384>),

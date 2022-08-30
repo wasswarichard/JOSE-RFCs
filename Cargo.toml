@@ -73,6 +73,7 @@ serde-value = { version = "0.7.0", default-features = false }
 
 [dev-dependencies]
 rand = "0.8.5"
+paste = "1.0.8"
 
 # For X.509 certificates of Json Web Keys
 # x509-cert = { git = "https://github.com/RustCrypto/formats.git" }

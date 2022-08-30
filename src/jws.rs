@@ -32,6 +32,7 @@ pub use {sign::*, verify::*};
 /// Different interpretations of a JWS payload.
 // FIXME: unencoded payload (IMPORTANT: check that string is all ascii, except `.` character)
 #[derive(Debug, Clone, Hash, PartialEq, Eq)]
+#[non_exhaustive]
 pub enum PayloadKind {
     /// The given base64 string will just be used as the payload.
     Standard(Base64UrlString),
@@ -113,7 +114,7 @@ pub enum SignError<P> {
 /// optionally the `key_id` field if present) inside the header will be
 /// overwritten with the values from the new key given as an argument to the
 /// `sign` method.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct JsonWebSignature<T, H = ()> {
     header: JoseHeader<H>,
     payload: T,
@@ -320,7 +321,7 @@ impl<T: FromRawPayload, H: DeserializeOwned> FromFormat<Compact> for JsonWebSign
 /// Cached value of the header and payload both
 /// stores as Base64Url strings.
 //#[doc(hidden)]
-#[derive(Debug, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct JsonWebSignatureValue {
     header: Base64UrlString,
     payload: Base64UrlString,
